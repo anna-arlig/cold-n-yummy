@@ -24,7 +24,21 @@ app.use(session({
     res.render('pages/vote', {flavors})
   })
 
-  app
+  app.post('/submitvote', (req, res) => {
+    res.redirect('/thanks')
+  })
+
+  app.get('/thanks', (req, res) => {
+      res.render('pages/thanks')
+  })
+
+  app.get('/suggest', (req, res) => {
+    res.render('pages/suggest')
+})
+
+app.get('/login', (req, res) => {
+    res.render('pages/login')
+})
 
   const PORT = process.env.PORT || 5000
   app.listen(PORT, () => {
