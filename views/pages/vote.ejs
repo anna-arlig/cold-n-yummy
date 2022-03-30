@@ -9,5 +9,16 @@
 </head>
 <body>
     <%- include('../partials/header.ejs') %>
+    <main>
+        <h2 class="header">Vote for the yummiest flavor!</h2>
+        <form action="/submitvote" method="POST">
+            <select name="flavors" id="flavors">
+                <% flavors.forEach(flavor => { %>
+                    <option value="<%= flavor.name %>"><%= flavor.name %> </option>
+                <% }) %> 
+            </select>
+            <button>Vote!</button>
+        </form>
+    </main>
 </body>
 </html>
