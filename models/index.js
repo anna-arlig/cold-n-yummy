@@ -12,7 +12,7 @@ const User = setupUser(sequelize)
 const Flavor = setupFlavor(sequelize)
 
 Flavor.hasMany(User, {foreignKey: 'vote'})
-User.belongsTo(Flavor)
+User.belongsTo(Flavor, {foreignKey: 'vote', targetKey: 'id'})
 
 module.exports = {User, Flavor}
 

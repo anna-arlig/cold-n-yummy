@@ -17,12 +17,17 @@ app.use(session({
   }))
 
   app.get('/', async (req, res) => {
-    const highscore = await User.findAll({
-        attributes: ['vote'],
-        group: 'vote',
+    const highscore = await Flavor.findAll({
+        attributes: ['name'],
+        include: [{
+          model: User,
+          required: true
+        }],       
+        group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
-    console.log(highscore)
+
+    
     res.render('index', {highscore})
   })
 
@@ -32,13 +37,24 @@ app.use(session({
   })
 
   app.post('/submitvote', async (req, res) => {
-    let vote = await Flavor.findAll({
-      attributes: ['name'],
-      where: {
-        name: req.body.flavor
-      }
-    });
-    await User.create({email: req.body.email, vote: vote.name})
+    try{
+      let vote = await Flavor.findOne({
+        attributes: ['id'],
+        where: {
+          name: req.body.flavor
+        }
+      });
+      await User.create({
+        email: req.body.email, 
+        vote: vote.id
+      },
+      )
+
+    }catch(error){
+      console.log(error)
+    }
+  
+
     res.redirect('/thanks')
   })
 
