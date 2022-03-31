@@ -11,5 +11,8 @@ const sequelize = new Sequelize({
 const User = setupUser(sequelize)
 const Flavor = setupFlavor(sequelize)
 
+Flavor.hasMany(User, {foreignKey: 'vote'})
+User.belongsTo(Flavor)
+
 module.exports = {User, Flavor}
 

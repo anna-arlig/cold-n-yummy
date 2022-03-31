@@ -13,11 +13,8 @@ module.exports = database => {
             },
             email: {
                 type: DataTypes.TEXT,
-                allowNull: false
-            },
-            vote: {
-                type: DataTypes.TEXT,
-                allowNull: true
+                allowNull: false,
+                unique: true
             }
         }, 
         {
