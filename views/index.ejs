@@ -12,11 +12,14 @@
     <main>
         <section class="highscore">
             <h2>Highscore</h2>
-                <% highscore.forEach(highscore => { %>
-                    <p><%= highscore.name %> </p>
-                <% }) %> 
+                <% let i = 1 %> 
+                <div class="container">
+                    <% highscore.forEach(highscore => { %>
+                        <p><%= i %>. <%= highscore.name %> </p>
+                        <% i++ %> 
+                    <% }) %> 
+                </div>   
         </section>
-
     </main>
 </body>
 </html>

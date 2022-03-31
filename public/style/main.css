@@ -49,7 +49,7 @@ main{
     border: 1px dashed rgb(42, 39, 39);
 }
 
-.highscore > p{
+.container > p{
     margin: 5px;
     font-size: 20px;
 }
@@ -107,5 +107,11 @@ button:active{
     background-color: white;
     box-shadow: 0 2px #666;
     transform: translateY(4px);
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    
 }
 
