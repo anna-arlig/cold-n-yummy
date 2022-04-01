@@ -21,7 +21,8 @@ app.use(session({
         attributes: ['name'],
         include: [{
           model: User,
-          required: true, 
+          required: true,
+      
         }],       
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
