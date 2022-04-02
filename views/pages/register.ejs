@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="./style/main.css">
 </head>
 <body>
     <%- include('../partials/header.ejs') %>
     <main>
-        <h2 class="header">Login</h2>
+        <h2 class="header">Register an account</h2>
 
-        <form action="/sendlogin" method="POST">
+        <form action="/sendregistration" method="POST">
             <input type="email" name="email" placeholder="Email">
             <input type="text" name="password" placeholder="Password">
-            <button>Login!</button>
+            <button>Register!</button>
         </form>
 
-      <a href="/register" class="link">
-        Don't have an account? Click here to create one!
+      <a href="/login" class="link">
+        Already have an account? Click here to login!
       </a>  
         
     </main>

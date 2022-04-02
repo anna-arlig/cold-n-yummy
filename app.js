@@ -22,7 +22,6 @@ app.use(session({
         include: [{
           model: User,
           required: true,
-      
         }],       
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
@@ -68,6 +67,18 @@ app.use(session({
 
 app.get('/login', (req, res) => {
     res.render('pages/login')
+})
+
+app.get('/register', (req, res) => {
+  res.render('pages/register')
+})
+
+app.post('/sendlogin', (req, res) => {
+  res.redirect('/')
+})
+
+app.post('/sendregistration', (req, res) => {
+  res.redirect('/')
 })
 
   const PORT = process.env.PORT || 5000
