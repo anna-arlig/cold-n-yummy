@@ -1,5 +1,4 @@
 require('dotenv').config()
-const { name } = require('ejs')
 const express = require('express')
 const app = express()
 const session = require('express-session')
@@ -11,6 +10,7 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
 app.use(session({
+    name: 'session',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
@@ -53,7 +53,6 @@ app.use(session({
       console.log(error)
     }
   
-
     res.redirect('/thanks')
   })
 
@@ -69,16 +68,37 @@ app.get('/login', (req, res) => {
     res.render('pages/login')
 })
 
+app.get('/welcome', (req, res) => {
+  res.render('pages/welcome')
+})
+
 app.get('/register', (req, res) => {
   res.render('pages/register')
 })
 
-app.post('/sendlogin', (req, res) => {
-  res.redirect('/')
+app.post('/sendlogin', async (req, res) => {
+  try{
+    const {email, password} = req.body
+    const user = await User.authenticate(email, password)
+    req.session.user = {
+      email: user.email,
+    }
+    res.redirect('/welcome')
+  }catch(error){
+    res.redirect('/')
+  } 
 })
 
-app.post('/sendregistration', (req, res) => {
-  res.redirect('/')
+app.post('/sendregistration', async (req, res) => {
+  const {email, password} = req.body
+  const user = await User.create({
+    email, 
+    password_hash: password
+  })
+  req.session.user = {
+    email: user.email,
+  }
+  res.redirect('/welcome')
 })
 
   const PORT = process.env.PORT || 5000
