@@ -11,7 +11,7 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
 app.use(session({
-    // name: 'session',
+    name: 'session',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
@@ -79,7 +79,7 @@ app.get('/login', (req, res) => {
 })
 
 app.get('/welcome', (req, res) => {
-  res.render('pages/welcome')
+  res.render('pages/welcome', {user: req.session.user})
 })
 
 app.get('/register', (req, res) => {
@@ -91,7 +91,8 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/sendlogout', (req, res) => {
-  req.session.destroy()
+  req.session = null
+  res.clearCookie('session');
   res.redirect('/')
 })
 
@@ -129,8 +130,6 @@ app.post('/sendregistration', async (req, res) => {
       password_hash: password
     })
   }
-
-  
   req.session.user = {
     email: user.email,
   }

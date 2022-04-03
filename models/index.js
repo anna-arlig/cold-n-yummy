@@ -12,7 +12,9 @@ const User = setupUser(sequelize)
 const Flavor = setupFlavor(sequelize)
 
 Flavor.hasMany(User, {foreignKey: 'vote'})
+Flavor.hasMany(User, {foreignKey: 'create'})
 User.belongsTo(Flavor, {foreignKey: 'vote', targetKey: 'id'})
+User.belongsTo(Flavor, {foreignKey: 'create', targetKey: 'id'})
 
 module.exports = {User, Flavor}
 
