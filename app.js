@@ -10,11 +10,13 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
 app.use(session({
-    name: 'session',
+    // name: 'session',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
   }))
+
+
 
   app.get('/', async (req, res) => {
     const highscore = await Flavor.findAll({
@@ -26,7 +28,6 @@ app.use(session({
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
-
     res.render('index', {highscore})
   })
 
@@ -43,12 +44,23 @@ app.use(session({
           name: req.body.flavor
         }
       });
-      await User.create({
-        email: req.body.email, 
-        vote: vote.id
-      },
-      )
 
+      let email = req.body.email
+      const user = await User.findOne({where: {email}})
+      console.log(user)
+      if(user){
+        await User.update({ vote: vote.id}, {
+          where: {
+            email: email
+          }
+        })
+        }
+      else{
+        await User.create({
+          email: email, 
+          vote: vote.id
+          },)
+      }
     }catch(error){
       console.log(error)
     }
@@ -74,6 +86,15 @@ app.get('/welcome', (req, res) => {
 
 app.get('/register', (req, res) => {
   res.render('pages/register')
+})
+
+app.get('/logout', (req, res) => {
+  res.render('pages/logout')
+})
+
+app.post('/sendlogout', (req, res) => {
+  req.session.destroy()
+  res.redirect('/')
 })
 
 app.post('/sendlogin', async (req, res) => {
