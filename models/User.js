@@ -39,7 +39,9 @@ module.exports = database => {
             modelName: 'User',
             hooks: {
                 beforeCreate(instance, options){
-                  instance.password_hash =  bcrypt.hashSync(instance.password_hash)
+                    if(instance.password_hash){
+                        instance.password_hash =  bcrypt.hashSync(instance.password_hash)
+                    }
                 }
         }
     }

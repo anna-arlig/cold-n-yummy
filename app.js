@@ -4,6 +4,7 @@ const app = express()
 const session = require('express-session')
 const sequelize = require('sequelize')
 const {User, Flavor} = require('./models')
+const bcrypt = require('bcryptjs')
 
 app.set('view engine', 'ejs')
 
@@ -15,8 +16,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
   }))
-
-
 
   app.get('/', async (req, res) => {
     const highscore = await Flavor.findAll({
@@ -47,7 +46,6 @@ app.use(session({
 
       let email = req.body.email
       const user = await User.findOne({where: {email}})
-      console.log(user)
       if(user){
         await User.update({ vote: vote.id}, {
           where: {
@@ -112,10 +110,27 @@ app.post('/sendlogin', async (req, res) => {
 
 app.post('/sendregistration', async (req, res) => {
   const {email, password} = req.body
-  const user = await User.create({
-    email, 
-    password_hash: password
-  })
+
+  const user = await User.findOne({where: {email}})
+
+  if(user){
+    await User.update({
+      email, 
+      password_hash: bcrypt.hashSync(password)
+      }, {
+        where: {
+          email
+        }
+      })
+
+  }else{
+    await User.create({
+      email, 
+      password_hash: password
+    })
+  }
+
+  
   req.session.user = {
     email: user.email,
   }
