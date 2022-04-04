@@ -5,7 +5,6 @@ const session = require('express-session')
 const sequelize = require('sequelize')
 const {User, Flavor} = require('./models')
 const bcrypt = require('bcryptjs')
-const { use } = require('express/lib/application')
 
 app.set('view engine', 'ejs')
 
@@ -15,7 +14,7 @@ app.use(session({
     name: 'session',
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
   }))
 
   app.get('/', async (req, res) => {
@@ -29,7 +28,7 @@ app.use(session({
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
-    console.log(login)
+   
     res.render('index', {highscore, login})
   })
 
