@@ -7,6 +7,10 @@
 footer{
     background-color: #FFB2B2; 
     height: 200px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 header{
@@ -56,6 +60,12 @@ main{
 .container > p{
     margin: 5px;
     font-size: 20px;
+}
+
+footer > p{
+    margin: 0px;
+    padding: 10px;
+    color: white;
 }
 
 .highscore > h2{
@@ -118,6 +128,11 @@ font-size: 20px;
 padding: 10px;
 opacity: 0.8;
 margin-top: 40px;
+margin-bottom: 100px;
+}
+
+.btn{
+    margin-bottom: 50px;
 }
 
 button:hover {opacity: 1}
