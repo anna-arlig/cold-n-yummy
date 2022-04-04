@@ -5,6 +5,7 @@ const session = require('express-session')
 const sequelize = require('sequelize')
 const {User, Flavor} = require('./models')
 const bcrypt = require('bcryptjs')
+const { use } = require('express/lib/application')
 
 app.set('view engine', 'ejs')
 
@@ -19,7 +20,7 @@ app.use(session({
 
   app.get('/', async (req, res) => {
     const highscore = await Flavor.findAll({
-        attributes: ['name'],
+        attributes:{include: ['name', [sequelize.fn("COUNT", sequelize.col("Users.vote")), "count"]]} ,
         include: [{
           model: User,
           required: true,
@@ -27,6 +28,7 @@ app.use(session({
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
+
     res.render('index', {highscore})
   })
 
@@ -47,11 +49,16 @@ app.use(session({
       let email = req.body.email
       const user = await User.findOne({where: {email}})
       if(user){
-        await User.update({ vote: vote.id}, {
-          where: {
-            email: email
-          }
-        })
+        if(user.vote){
+          res.redirect('/')
+        }
+        else{
+          await User.update({ vote: vote.id}, {
+            where: {
+              email: email
+            }
+          })
+        }
         }
       else{
         await User.create({
@@ -72,6 +79,23 @@ app.use(session({
 
   app.get('/suggest', (req, res) => {
     res.render('pages/suggest')
+  })
+
+app.post('/sendsuggest', (req, res) => {
+
+  try{
+    req.session.newflavor = {
+      suggestion: req.body.suggestion
+    }
+    res.redirect('/thankssuggest')
+  }catch{
+    console.log(error)
+    res.redirect('/')
+  } 
+})
+
+app.get('/thankssuggest', (req, res) => {
+  res.render('pages/thankssuggest', {newflavor: req.session.newflavor})
 })
 
 app.get('/login', (req, res) => {
@@ -105,15 +129,14 @@ app.post('/sendlogin', async (req, res) => {
     }
     res.redirect('/welcome')
   }catch(error){
+    console.log(error)
     res.redirect('/')
   } 
 })
 
 app.post('/sendregistration', async (req, res) => {
   const {email, password} = req.body
-
   const user = await User.findOne({where: {email}})
-
   if(user){
     await User.update({
       email, 
