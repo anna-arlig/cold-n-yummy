@@ -144,8 +144,20 @@ button:active{
 }
 
 .container{
-    display: flex;
-    flex-direction: column;
-    
+    display: grid;
+    grid-template-areas: "vote score"
 }
 
+.score, .vote{
+    font-size: 25px;
+    margin-right: 15px;
+    margin-top: 0px;
+}
+
+.score{
+    grid-area: "score";
+}
+
+.vote{
+    grid-area: "vote";
+}

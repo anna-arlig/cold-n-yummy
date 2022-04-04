@@ -28,8 +28,14 @@ app.use(session({
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
-   
-    res.render('index', {highscore, login})
+
+    const votes = await User.count({ 
+      attributes: ["vote"],
+      group: "vote",
+      order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
+    })
+  
+    res.render('index', {highscore, login, votes})
   })
 
   app.get('/vote', async (req, res) => {
@@ -46,7 +52,6 @@ app.use(session({
           name: req.body.flavor
         }
       });
-
       let email = req.body.email
       const user = await User.findOne({where: {email}})
       if(user){
@@ -60,19 +65,21 @@ app.use(session({
               email: email
             }
           })
-        }
-        }
+        }}
       else{
-        await User.create({
-          email: email, 
-          vote: vote.id
-          },)
-      }
+        if(!email){
+          req.session.errorMessage = "You need to provide an email"
+          res.redirect('/error')
+        }else{
+          await User.create({
+            email: email, 
+            vote: vote.id
+            },)
+        }}
     }catch(error){
     req.session.errorMessage = error.message
     res.redirect('/error')
     }
-  
     res.redirect('/thanks')
   })
 
@@ -86,12 +93,11 @@ app.use(session({
     res.render('pages/suggest', {login})
   })
 
-app.post('/sendsuggest', async (req, res) => {
-
-  try{
-    let email = req.body.email
-    const user = await User.findOne({where: {email}})
-    if(user){
+  app.post('/sendsuggest', async (req, res) => {
+    try{
+      let email = req.body.email
+      const user = await User.findOne({where: {email}})
+      if(user){
       if(user.created){
         req.session.errorMessage = 'You have already suggested a flavor!'
         res.redirect('/error')
@@ -105,11 +111,11 @@ app.post('/sendsuggest', async (req, res) => {
         await Flavor.create({name: req.body.suggestion})
       }
       }
-    req.session.newflavor = {
+     req.session.newflavor = {
       suggestion: req.body.suggestion
-    }
+      }
     res.redirect('/thankssuggest')
-  }catch(error){
+    }catch(error){
     req.session.errorMessage = error.message
     res.redirect('/error')
   } 
@@ -182,7 +188,6 @@ app.post('/sendregistration', async (req, res) => {
       password_hash: password
     })
   }
-  
   res.redirect('/welcome')
 })
 
