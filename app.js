@@ -19,6 +19,7 @@ app.use(session({
   }))
 
   app.get('/', async (req, res) => {
+    const login = req.session.user
     const highscore = await Flavor.findAll({
         attributes:{include: ['name', [sequelize.fn("COUNT", sequelize.col("Users.vote")), "count"]]} ,
         include: [{
@@ -29,12 +30,13 @@ app.use(session({
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
 
-    res.render('index', {highscore})
+    res.render('index', {highscore, login})
   })
 
   app.get('/vote', async (req, res) => {
+    const login = req.session.user
     const flavors = await Flavor.findAll({attributes: ['name']})
-    res.render('pages/vote', {flavors})
+    res.render('pages/vote', {flavors, login})
   })
 
   app.post('/submitvote', async (req, res) => {
@@ -74,16 +76,33 @@ app.use(session({
   })
 
   app.get('/thanks', (req, res) => {
-      res.render('pages/thanks')
+    const login = req.session.user
+      res.render('pages/thanks', {login})
   })
 
   app.get('/suggest', (req, res) => {
-    res.render('pages/suggest')
+    const login = req.session.user
+    res.render('pages/suggest', {login})
   })
 
-app.post('/sendsuggest', (req, res) => {
+app.post('/sendsuggest', async (req, res) => {
 
   try{
+    let email = req.body.email
+    const user = await User.findOne({where: {email}})
+    if(user){
+      if(user.created){
+        res.redirect('/')
+      }
+      else{
+        await User.update({ created: true}, {
+          where: {
+            email: email
+          }
+        })
+        await Flavor.create({name: req.body.suggestion})
+      }
+      }
     req.session.newflavor = {
       suggestion: req.body.suggestion
     }
@@ -95,23 +114,28 @@ app.post('/sendsuggest', (req, res) => {
 })
 
 app.get('/thankssuggest', (req, res) => {
-  res.render('pages/thankssuggest', {newflavor: req.session.newflavor})
+  const login = req.session.user
+  res.render('pages/thankssuggest', {newflavor: req.session.newflavor, login})
 })
 
 app.get('/login', (req, res) => {
-    res.render('pages/login')
+  const login = req.session.user
+    res.render('pages/login', {login})
 })
 
 app.get('/welcome', (req, res) => {
-  res.render('pages/welcome', {user: req.session.user})
+  const login = req.session.user
+  res.render('pages/welcome', {user: req.session.user, login})
 })
 
 app.get('/register', (req, res) => {
-  res.render('pages/register')
+  const login = req.session.user
+  res.render('pages/register', {login})
 })
 
 app.get('/logout', (req, res) => {
-  res.render('pages/logout')
+  const login = req.session.user
+  res.render('pages/logout', {login})
 })
 
 app.post('/sendlogout', (req, res) => {

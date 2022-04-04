@@ -6,10 +6,15 @@
         <a href="/"><p>Highscore</p></a>
         <a href="/suggest"><p>Suggest Flavor</p></a>
         <a href="/vote"><p>Vote</p></a>
-        <a href="/login"><p>Login</p></a>
-        <a href="/logout"><p>Logout</p></a>
 
 
+        <% if (!login) { %>
+            <a href="/login"><p>Login</p></a>
+      
+        <% } else { %>
+            <a href="/logout"><p>Logout</p></a>
+            <% } %>
+        
         
     </nav>
 

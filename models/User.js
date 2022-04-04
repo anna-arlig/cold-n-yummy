@@ -32,11 +32,16 @@ module.exports = database => {
                 type: DataTypes.TEXT,
                 allowNull: true,
 
+            },
+            created: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             }
         }, 
         {
             sequelize: database,
             modelName: 'User',
+            timestamps: false,
             hooks: {
                 beforeCreate(instance, options){
                     if(instance.password_hash){

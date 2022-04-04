@@ -18,6 +18,7 @@ module.exports = database => {
         }, 
         {
             sequelize: database,
+            timestamps: false,
             modelName: 'Flavor'
         }
     )
