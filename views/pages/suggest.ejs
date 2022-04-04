@@ -12,7 +12,13 @@
     <main>
         <h2 class="header">Want to suggest a flavor?</h2>
         <form action="/sendsuggest" method="POST"> 
-            <input type="email" name="email" placeholder="Email">
+            <% if (login) { %>
+                <input type="email" name="email" placeholder="Email" value="<%= login.email %> ">
+            <% } else { %>
+                <input type="email" name="email" placeholder="Email ">
+                <% } %>
+             
+          
             <input type="text" name="suggestion" placeholder="Your suggestion">
             <button>Send you suggestion!</button>
         </form>

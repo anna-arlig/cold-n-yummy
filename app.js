@@ -29,7 +29,7 @@ app.use(session({
         group: 'name',
         order: [[sequelize.fn('COUNT', 'vote'), 'DESC']]
     })
-
+    console.log(login)
     res.render('index', {highscore, login})
   })
 
@@ -52,7 +52,8 @@ app.use(session({
       const user = await User.findOne({where: {email}})
       if(user){
         if(user.vote){
-          res.redirect('/')
+          req.session.errorMessage = 'You have already voted!'
+          res.redirect('/error')
         }
         else{
           await User.update({ vote: vote.id}, {
@@ -69,7 +70,8 @@ app.use(session({
           },)
       }
     }catch(error){
-      console.log(error)
+    req.session.errorMessage = error.message
+    res.redirect('/error')
     }
   
     res.redirect('/thanks')
@@ -92,7 +94,8 @@ app.post('/sendsuggest', async (req, res) => {
     const user = await User.findOne({where: {email}})
     if(user){
       if(user.created){
-        res.redirect('/')
+        req.session.errorMessage = 'You have already suggested a flavor!'
+        res.redirect('/error')
       }
       else{
         await User.update({ created: true}, {
@@ -107,9 +110,9 @@ app.post('/sendsuggest', async (req, res) => {
       suggestion: req.body.suggestion
     }
     res.redirect('/thankssuggest')
-  }catch{
-    console.log(error)
-    res.redirect('/')
+  }catch(error){
+    req.session.errorMessage = error.message
+    res.redirect('/error')
   } 
 })
 
@@ -153,8 +156,8 @@ app.post('/sendlogin', async (req, res) => {
     }
     res.redirect('/welcome')
   }catch(error){
-    console.log(error)
-    res.redirect('/')
+    req.session.errorMessage = error.message
+    res.redirect('/error')
   } 
 })
 
@@ -182,6 +185,13 @@ app.post('/sendregistration', async (req, res) => {
   }
   
   res.redirect('/welcome')
+})
+
+app.get('/error', (req, res) => {
+  const login = req.session.user
+  const errorMessage = req.session.errorMessage
+  req.session.errorMessage = null
+  res.render('pages/error', {login, errorMessage})
 })
 
   const PORT = process.env.PORT || 5000

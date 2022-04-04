@@ -12,7 +12,11 @@
     <main>
         <h2 class="header">Vote for the yummiest flavor!</h2>
         <form action="/submitvote" method="POST">
-            <input type="email" name="email" placeholder="Enter your email">
+            <% if (login) { %>
+                <input type="email" name="email" placeholder="Email" value="<%= login.email %> ">
+            <% } else { %>
+                <input type="email" name="email" placeholder="Email ">
+                <% } %>
             <select name="flavor" id="flavor">
                 <% flavors.forEach(flavor => { %>
                     <option value="<%= flavor.name %>"><%= flavor.name %> </option>
