@@ -161,6 +161,9 @@ app.post('/sendlogin', async (req, res) => {
 app.post('/sendregistration', async (req, res) => {
   const {email, password} = req.body
   const user = await User.findOne({where: {email}})
+  req.session.user = {
+    email: email
+  }
   if(user){
     await User.update({
       email, 
@@ -177,9 +180,7 @@ app.post('/sendregistration', async (req, res) => {
       password_hash: password
     })
   }
-  req.session.user = {
-    email: user.email,
-  }
+  
   res.redirect('/welcome')
 })
 
