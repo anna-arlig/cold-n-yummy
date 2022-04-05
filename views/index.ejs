@@ -16,13 +16,8 @@
                 <div class="container"> 
                     <div class="score">
                         <% highscore.forEach(score => { %>  
-                            <p><%= i %>. <%= score.name %> </p>
+                            <p><%= i %>. <%= score.name %> - <%= score.dataValues.count %> votes </p>
                             <% i++ %> 
-                        <% }) %>  
-                    </div>
-                    <div class="vote">
-                        <% votes.forEach(vote => { %> 
-                            <p><%= vote.count %> votes</p>    
                         <% }) %>  
                     </div>
                 </div>   
